@@ -9,7 +9,7 @@ IFS=$'\n\t'
 
 # Unset the pipeline variables we define in this script, lest we get pollution
 # of our pipeline environment.
-unset ...
+unset _PIPE_CTLDIR _PIPE_TOT_MEM _PIPE_FINAL_OUTPUT_DIR _PIPE_EXEC_RECORD STEP_00
 
 # source the configuration script (Lemma.sh). We will require that it exist in the same
 # directory as this script.
