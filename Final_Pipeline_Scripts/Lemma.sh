@@ -14,11 +14,16 @@ IFS=$'\n\t'
 # Unset the configuration variables before we set them in this script. This is
 # to prevent any "cross-run" memory. This is similar to the "rm(list=ls())"
 # statement in R.
-unset ...
+unset _PIPE_SCRIPTS_FROM_GITHUB _PIPE_ANALYSIS_START_DATE _PIPE_PARTITION \
+	_PIPE_MEM_PER_CPU _PIPE_WALLTIME _PIPE_CPUS_PER_TASK _PIPE_NTASKS \
+	_PIPE_NNODES _PIPE_SLURM_ACCOUNT _PIPE_EMAIL_TYPES _PIPE_SCRATCH_DIR \
+	_PIPE_ALL_DATA _PIPE_ALL_CDS _PIPE_CYP_NAME_PROTEIN_ID \
+	_PIPE_COHORT_MEMBERS _PIPE_RUN_NICKNAME
 
 # Define the path to the user-specific copy of the GitHub repository. Each
-# user should have their own version of the pipeline scripts.
-export _PIPE_GITHUB_FOLDER=""
+# user should have their own version of the pipeline scripts. This is the path
+# to where the the user has cloned the GitHub repository onto Alpine (or whichever cluster).
+export _PIPE_SCRIPTS_FROM_GITHUB="/projects/anashoba@xsede.org/PipelineFiles/PGxPipelineDevelopment"
 
 # Define the current run date as a variable that we can reference later in the script, so that if a run
 # crosses the midnight time, then the dates will be consistent. This is for making sure that all ouput
@@ -55,7 +60,7 @@ export _PIPE_ALL_DATA="${_PIPE_SCRATCH_DIR}/SOMETHING_SNAPPY"
 # Path to directory containing all cds fasta files
 export _PIPE_ALL_CDS="${_PIPE_ALL_DATA}/Input_CDS_Files"
 # Path to the table connecting CYP450 gene names with their associated the human protein IDs
-CYPGene_Protein_Lookup="${_PIPE_ALL_DATA}/CYP57genesHumanProteinIDs.csv"
+export _PIPE_CYP_NAME_PROTEIN_ID="${_PIPE_ALL_DATA}/CYP57genesHumanProteinIDs.csv"
 
 #Cohort Designation
 # In this directory RENAME IT FOR POSTERITY List out the full genus_species name for each species' CDS 
