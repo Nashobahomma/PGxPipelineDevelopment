@@ -29,7 +29,7 @@ export _PIPE_SCRIPTS_FROM_GITHUB="/projects/anashoba@xsede.org/PipelineFiles/PGx
 # Define the current run date as a variable that we can reference later in the script, so that if a run
 # crosses the midnight time, then the dates will be consistent. This is for making sure that all ouput
 # files that are named with a date stamp have consistent dates.
-export _PIPE_ANALYSIS_START_DATE=$(date +'%F %T')
+export _PIPE_ANALYSIS_START_DATE=$(date +'%F')
 
 # Define the scheduler resource request parameters for each sbatch command. These
 # should be tailored to the cluster, dataset size, and partitions available.

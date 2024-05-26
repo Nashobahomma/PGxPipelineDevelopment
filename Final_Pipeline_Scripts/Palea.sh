@@ -74,7 +74,7 @@ echo "Nickname of run: ${_PIPE_RUN_NICKNAME}" >> "${_PIPE_EXEC_RECORD}"
 echo "Working directory: $(pwd -P)" >> "${_PIPE_EXEC_RECORD}"
 echo "Invoking command: ${BASH_SOURCE} $(printf ' %q' "${@}")" >> "${_PIPE_EXEC_RECORD}"
 echo "Input CDS FASTA directory: ${_PIPE_ALL_CDS}" >> "${_PIPE_EXEC_RECORD}"
-echo "Number of CDS FASTA files: ${#_PIPE_CORHORT_MEMBERS[@]}" >> "${_PIPE_EXEC_RECORD}"
+echo "Number of CDS FASTA files: ${#_PIPE_COHORT_MEMBERS[@]}" >> "${_PIPE_EXEC_RECORD}"
 echo "Final output directory: ${_PIPE_FINAL_OUTPUT_DIR}" >> "${_PIPE_EXEC_RECORD}"
 
 # Make the directories for each step of the pipeline
@@ -97,7 +97,7 @@ mkdir -p "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs" \
 STEP_00=$(sbatch \
     --parsable \
     --mail-type="${_PIPE_EMAIL_TYPES}" \
-    -J "${_PIPE_NAME}.00_Run_Orthofinder" \
+    -J "00_Run_Orthofinder" \
     -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/00_Run_Orthofinder.stdout" \
     -e "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/00_Run_Orthofinder.stderr" \
     -N "${_PIPE_NNODES}" \
