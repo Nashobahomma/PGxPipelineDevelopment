@@ -1,6 +1,7 @@
 #!/bin/bash
 # The "lemma" -- the outer layer of a seed coat in a grass flower. This is the
 # script that users should edit to customize their individual pipeline runs.
+# This is the configuration script for the pipeline.
 
 # Use Bash "strict mode"
 #       -e: Exit on first error, rather than try to run the whole script
@@ -89,6 +90,12 @@ export _PIPE_COHORT_MEMBER_NUMBER="${#_PIPE_COHORT_MEMBERS[@]}"
 # Define a nickname for the analysis. This will be used to name the ouput
 # directory for the pipeline.
 export _PIPE_RUN_NICKNAME="${_PIPE_COHORT_MEMBER_NUMBER}_${_PIPE_ANALYSIS_START_DATE}"
+
+# Version identifier for the pipeline.
+export _PIPE_VERSION="0.0.0"
+# Information about who is running the pipeline and when. Do not edit these.
+export _PIPE_RUN_USER="$(id -un)"
+export _PIPE_RUN_TIME="$(date '+%Y-%m-%d_%T')"
 
 #copy directory containing all data and scripts into the scratch directory
 #______NOTE: NEED TO MAKE THIS DIRECTORY OR REPLACE ForAlpine WITH A NEW DESCRIPTIVE NAME like PipelineFiles
