@@ -57,9 +57,9 @@ export _PIPE_SCRATCH_DIR="/scratch/alpine/${USER}"
 #	- Directory with CDS FASTA files
 #	- CYP name -> Protein ID CSV
 # This directory should be kept in scratch space.
-export _PIPE_ALL_DATA="${_PIPE_SCRATCH_DIR}/SOMETHING_SNAPPY"
+export _PIPE_ALL_DATA="/projects/anashoba@xsede.org/PipelineFiles"
 # Path to directory containing all cds fasta files
-export _PIPE_ALL_CDS="${_PIPE_ALL_DATA}/Input_CDS_Files"
+export _PIPE_ALL_CDS="${_PIPE_ALL_DATA}/NCBI_CDS_Files"
 # Path to the table connecting CYP450 gene names with their associated the human protein IDs
 export _PIPE_CYP_NAME_PROTEIN_ID="${_PIPE_ALL_DATA}/CYP57genesHumanProteinIDs.csv"
 
