@@ -1,0 +1,2 @@
+Put stuff here
+categories: what is referred to by multiple scripts and so should go into the overcoat, what is specific to a single script and so could potentially stay in that single script rather than the overcoat, directories that are step or script specific and the user really doesn't need to know about it so we will just leave it (eg. making a temp directory to put paml junk into before we put it into the final output folder). 
