@@ -41,7 +41,7 @@ cd "${TEMP_DIR_NAME}"
 mkdir -p ./orthofinder_cds_in
 for species_fasta in "${_PIPE_COHORT_MEMBERS[@]}"
 do
-	ln -s "${species_fasta}" "${TEMP_DIR_NAME}/orthofinder_cds_in/$(basename "${species_fasta})"
+	ln -s "${species_fasta}" "${TEMP_DIR_NAME}/orthofinder_cds_in/$(basename "${species_fasta}")"
 done
 
 # Run Orthofinder

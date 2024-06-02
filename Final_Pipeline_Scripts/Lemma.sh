@@ -99,38 +99,3 @@ export _PIPE_VERSION="0.0.0"
 # Information about who is running the pipeline and when. Do not edit these.
 export _PIPE_RUN_USER="$(id -un)"
 export _PIPE_RUN_TIME="$(date '+%Y-%m-%d_%T')"
-
-#copy directory containing all data and scripts into the scratch directory
-#______NOTE: NEED TO MAKE THIS DIRECTORY OR REPLACE ForAlpine WITH A NEW DESCRIPTIVE NAME like PipelineFiles
-#cp -r /projects/anashoba@xsede.org/PIPELINEFILES /scratch/alpine/$USER
-
-
-#!the og.tsv and gene-protein-og table will be added in the orthofinder batch script
-
-
-# MAYBE MAKE ALL THE STEP_XX directories here?
-
-
-#Set the directory for all scripts
-# ALL_SCRIPTS="/scratch/alpine/anashoba@xsede.org/SNAPPY_SCRIPTS"
-
-# # NOTE NOTE NOTE is there a trick to batching several scripts that are themselves batch running code? 
-# #Run bash scripts in this order:
-# ORTHOFINDER_SH="{ALL_SCRIPTS}/Orthofinder.sh"
-# TAB_SH="{ALL_SCRIPTS}/Translate_align_backtranslate.sh"
-# GENE_TREES="{ALL_SCRIPTS}/Make_Gene_Trees.sh"
-# CONTROL_FILES="{ALL_SCRIPTS}/Make_CtlFiles.sh"
-# RUN_PAML="{ALL_SCRIPTS}/Run_Codeml_SiteModels.sh"
-
-
-
-
-# THE REAL GUTS GO HERE
-
-
-
-
-# #When done with the batch scripts:
-# ... PARSER python script here 
-# MAKE_PAML_SITEMODEL_RESULTS_TABLE="{ALL_SCRIPTS}/PAML_Output_Parser.py"
-# python ""
