@@ -86,8 +86,8 @@ mkdir -p "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_00_Orthofinder_TargetOGs" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_01_PAML_Seq_Inputs" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_02_PAML_Gene_Trees" \
-	"${_PIPE_FINAL_OUTPUT_DIR}/Step_06_PAML_Ctl_Files" \
-	"${_PIPE_FINAL_OUTPUT_DIR}/Step_07_PAML_Runs" \
+	"${_PIPE_FINAL_OUTPUT_DIR}/Step_03_PAML_Control_Files" \
+	"${_PIPE_FINAL_OUTPUT_DIR}/Step_04_PAML_Runs" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_08_ParseOutFiles"
 
 # Next time: get these sbatch commands finalized as we verfiy and generalize the
@@ -149,25 +149,24 @@ STEP_02=$(sbatch \
     "${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/02_Make_Gene_Trees.sh")
 echo "Step 02: Make_Gene_Trees has job ID ${STEP_02}" | tee -a "${_PIPE_EXEC_RECORD}"
 
-# #   Step 03: xHYB profiling
-# STEP_03=$(sbatch \
-#     --parsable \
-#     --kill-on-invalid-dep=yes \
-#     --dependency=afterok:"${STEP_02}" \
-#     --mail-type="${_PIPE_EMAIL_TYPES}" \
-#     -J "${_PIPE_NAME}.03_xHYB_Profiling" \
-#     -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/03_xHYB_Profiling.stdout" \
-#     -e "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/03_xHYB_Profiling.stderr" \
-#     -N "${_PIPE_NNODES}" \
-#     -n "${_PIPE_NTASKS}" \
-#     -c "${_KRAKEN_CPUS_PER_TASK}" \
-#     -t "${_PIPE_WALLTIME}" \
-#     --mem-per-cpu "${_PIPE_MEM_PER_CPU}" \
-#     -p "${_PIPE_PARTITION}" \
-#     -A "${_PIPE_SLURM_ACCOUNT}" \
-#     --export=_PIPE_WORKDIR="${_PIPE_WORKDIR}",_PIPE_INSTALL_DIR="${_PIPE_INSTALL_DIR}",_PIPE_CONDA_DIR="${_PIPE_CONDA_DIR}",_PIPE_RESULTS_DIR="${_PIPE_RESULTS_DIR}",_PIPE_NAME="${_PIPE_NAME}",_PIPE_XHYB_DB="${_PIPE_XHYB_DB}" \
-#     "${_PIPE_INSTALL_DIR}/Pipeline_Scripts/03_xHYB_Profiling.sh")
-# echo "Step 03: xHYB profiling has job ID ${STEP_03}" | tee -a "${_PIPE_EXEC_RECORD}"
+# Step 03: Make PAML site model control files
+STEP_03=$(sbatch \
+    --parsable \
+    --kill-on-invalid-dep=yes \
+    --dependency=afterok:"${STEP_02}" \
+    --mail-type="${_PIPE_EMAIL_TYPES}" \
+    -J "03_Make_PAML_Control_Files" \
+    -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/03_Make_PAML_Control_Files.stdout" \
+    -e "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/03_Make_PAML_Control_Files.stderr" \
+    -N "${_PIPE_NNODES}" \
+    -n "${_PIPE_NTASKS}" \
+    -c "${_PIPE_CPUS_PER_TASK}" \
+    -t "${_PIPE_WALLTIME}" \
+    --mem-per-cpu "${_PIPE_MEM_PER_CPU}" \
+    -p "${_PIPE_PARTITION}" \
+    --export="_PIPE_SCRIPTS_FROM_GITHUB=${_PIPE_SCRIPTS_FROM_GITHUB},_PIPE_FINAL_OUTPUT_DIR=${_PIPE_FINAL_OUTPUT_DIR}" \
+    "${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/03_Make_PAML_Control_Files.sh")
+echo "Step 03: Make_PAML_Control_Files has job ID ${STEP_03}" | tee -a "${_PIPE_EXEC_RECORD}"
 
 # #   Step 04: Broader metagenomics profiling
 # STEP_04=$(sbatch \
