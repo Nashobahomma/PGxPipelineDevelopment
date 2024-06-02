@@ -6,6 +6,8 @@
 # job script envrionment:
 #	_PIPE_FINAL_OUTPUT_DIR
 # 	_PIPE_SCRATCH_DIR
+#	_PIPE_RUN_NICKNAME
+#	_PIPE_ALL_DATA
 
 
 # Look for the checkpoint. Exit with success if we find it, exit without error.
@@ -20,11 +22,6 @@ set -euo pipefail
 module load anaconda
 conda activate CYPevol
 
-# Path to the codeml program
-#NEEDS ADJUSTING: 
-#CODEML="/Users/ambereule-nashoba/Desktop/Dropbox/KClaw/PAML/paml4.8/bin/codeml"
-# Path to the main codeml output directory
-#CODEML_WORKING_DIRECTORY="/Users/ambereule-nashoba/Desktop/Dropbox/KClaw/PipelineB/16species_57Genes/16species_57Genes_Workflow/Step_06_PAML_Runs"
 # We will put a "codeml working directory" in /scratch because codeml writes ~10 files during the course of its
 # analysis (in addition to the main .out file). These will be in scratch because we will potentially be generating
 # hundreds of these little files, which is not good for /projects.
@@ -35,6 +32,11 @@ CODEML_WORKING_DIRECTORY="${_PIPE_SCRATCH_DIR}/${_PIPE_RUN_NICKNAME}_codeml_work
 CODEML_ACCESSORY_OUT="${_PIPE_FINAL_OUTPUT_DIR}/Step_04Acc_PAML_Accessory_Files"
 # Define a path to the input directory of codeml control files
 CONTROL_FILE_DIRECTORY="${_PIPE_FINAL_OUTPUT_DIR}/Step_03_PAML_Control_Files"
+
+# Define path to the Python script that parses PAML output to produce a table that is
+# easy to analyze with R
+PARSE_PAML_OUT_PY="${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/Parse_PAML_Outputs.py"
+
 
 # Now, run codeml and the cleanup steps.
 for ctl_file in $(find "${CONTROL_FILE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type f -name '*.txt' | sort -V)
@@ -64,6 +66,13 @@ do
 	# Copy the .zip into the codeml accessory folder in /projects.
 	cp "${og_id_and_codeml_model}.zip" "${CODEML_ACCESSORY_OUT}/"
 done
+
+# Parse the directory of PAML outputs to produce a table with dN/dS (omegas) and maximum likelihood values
+# for ease of analysis in R
+python "${PARSE_PAML_OUT_PY}" \
+	"${_PIPE_FINAL_OUTPUT_DIR}/Step_04_PAML_Runs" \
+	"${_PIPE_ALL_DATA}/CYPnames_Trans_Prot_with_OGs_${_PIPE_RUN_NICKNAME}.csv" \
+	> "${_PIPE_ALL_DATA}/Parsed_PAML_Output_table_${_PIPE_RUN_NICKNAME}.csv"
 
 
 # Make a checkpoint file

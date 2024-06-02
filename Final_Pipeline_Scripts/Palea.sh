@@ -65,7 +65,7 @@ done
 
 # Make the output directory and record who is running the pipeline and how it
 # is configured
-_PIPE_FINAL_OUTPUT_DIR="${_PIPE_ALL_DATA}/${		}"
+_PIPE_FINAL_OUTPUT_DIR="${_PIPE_ALL_DATA}/${_PIPE_RUN_NICKNAME}"
 # Make a text file that records who, when, and where (working directory on Alpine) the pipeline was run.
 _PIPE_EXEC_RECORD="${_PIPE_FINAL_OUTPUT_DIR}/PGx_Pipeline_Execution_Record.txt"
 mkdir -p "${_PIPE_FINAL_OUTPUT_DIR}"
@@ -88,8 +88,7 @@ mkdir -p "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_02_PAML_Gene_Trees" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_03_PAML_Control_Files" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_04_PAML_Runs" \
-	"${_PIPE_FINAL_OUTPUT_DIR}/Step_04Acc_PAML_Accessory_Files" \
-	"${_PIPE_FINAL_OUTPUT_DIR}/Step_08_ParseOutFiles"
+	"${_PIPE_FINAL_OUTPUT_DIR}/Step_04Acc_PAML_Accessory_Files"
 
 # Next time: get these sbatch commands finalized as we verfiy and generalize the
 # job scripts.
@@ -184,7 +183,7 @@ STEP_04=$(sbatch \
     -t "${_PIPE_WALLTIME}" \
     --mem-per-cpu "${_PIPE_MEM_PER_CPU}" \
     -p "${_PIPE_PARTITION}" \
-    --export="_PIPE_FINAL_OUTPUT_DIR=${_PIPE_FINAL_OUTPUT_DIR},_PIPE_SCRATCH_DIR=${_PIPE_SCRATCH_DIR}" \
+    --export="_PIPE_FINAL_OUTPUT_DIR=${_PIPE_FINAL_OUTPUT_DIR},_PIPE_SCRATCH_DIR=${_PIPE_SCRATCH_DIR},_PIPE_ALL_DATA=${_PIPE_ALL_DATA},_PIPE_RUN_NICKNAME=${_PIPE_RUN_NICKNAME}" \
     "${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/04_Run_PAML_Site_Models.sh")
 echo "Step 04: Run_PAML_Site_Models has job ID ${STEP_04}" | tee -a "${_PIPE_EXEC_RECORD}"
 
