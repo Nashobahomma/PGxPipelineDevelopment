@@ -1,4 +1,7 @@
 #!/bin/bash
+# Authors:
+#   Amber Nashoba
+#   Tom Kono
 # The "palea" --  the inner layer of a seed coat in a grass flower. This is the
 # script that does all the 'sbatch' calls in the right order to execute the
 # pipeline. Users should not have to edit this script.
@@ -82,7 +85,7 @@ mkdir -p "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Checkpoints" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_00_Orthofinder_TargetOGs" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_01_PAML_Seq_Inputs" \
-	"${_PIPE_FINAL_OUTPUT_DIR}/Step_05_PAML_Gene_Trees" \
+	"${_PIPE_FINAL_OUTPUT_DIR}/Step_02_PAML_Gene_Trees" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_06_PAML_Ctl_Files" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_07_PAML_Runs" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_08_ParseOutFiles"
@@ -123,29 +126,28 @@ STEP_01=$(sbatch \
     -t "${_PIPE_WALLTIME}" \
     --mem-per-cpu "${_PIPE_MEM_PER_CPU}" \
     -p "${_PIPE_PARTITION}" \
-    --export="_PIPE_SCRIPTS_FROM_GITHUB=${_PIPE_SCRIPTS_FROM_GITHUB},_PIPE_CYP_NAME_PROTEIN_ID=${_PIPE_CYP_NAME_PROTEIN_ID},_PIPE_SCRATCH_DIR=${_PIPE_SCRATCH_DIR},_PIPE_RUN_NICKNAME=${_PIPE_RUN_NICKNAME},_PIPE_ALL_DATA=${_PIPE_ALL_DATA},_PIPE_FINAL_OUTPUT_DIR=${_PIPE_FINAL_OUTPUT_DIR},_PIPE_COHORT_MEMBERS=${_PIPE_COHORT_MEMBERS}" \
+    --export="_PIPE_SCRIPTS_FROM_GITHUB=${_PIPE_SCRIPTS_FROM_GITHUB},_PIPE_SCRATCH_DIR=${_PIPE_SCRATCH_DIR},_PIPE_RUN_NICKNAME=${_PIPE_RUN_NICKNAME},_PIPE_ALL_DATA=${_PIPE_ALL_DATA},_PIPE_FINAL_OUTPUT_DIR=${_PIPE_FINAL_OUTPUT_DIR},_PIPE_COHORT_MEMBERS=${_PIPE_COHORT_MEMBERS}" \
     "${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/Step_01_Prepare_PAML_Sequences.sh")
 echo "Step 01: Prepare_PAML_Sequences has job ID ${STEP_01}" | tee -a "${_PIPE_EXEC_RECORD}"
 
-# #   Step 02: Contaminant removal
-# STEP_02=$(sbatch \
-#     --parsable \
-#     --kill-on-invalid-dep=yes \
-#     --dependency=afterok:"${STEP_01}" \
-#     --mail-type="${_PIPE_EMAIL_TYPES}" \
-#     -J "${_PIPE_NAME}.02_Contaminant_Removal" \
-#     -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/02_Contaminant_Removal.stdout" \
-#     -e "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/02_Contaminant_Removal.stderr" \
-#     -N "${_PIPE_NNODES}" \
-#     -n "${_PIPE_NTASKS}" \
-#     -c "${_PIPE_CPUS_PER_TASK}" \
-#     -t "${_PIPE_WALLTIME}" \
-#     --mem-per-cpu "${_PIPE_MEM_PER_CPU}" \
-#     -p "${_PIPE_PARTITION}" \
-#     -A "${_PIPE_SLURM_ACCOUNT}" \
-#     --export=_PIPE_WORKDIR="${_PIPE_WORKDIR}",_PIPE_INSTALL_DIR="${_PIPE_INSTALL_DIR}",_PIPE_CONDA_DIR="${_PIPE_CONDA_DIR}",_PIPE_RESULTS_DIR="${_PIPE_RESULTS_DIR}",_PIPE_NAME="${_PIPE_NAME}",_PIPE_REMOVE_HUMAN="${_PIPE_REMOVE_HUMAN}",_PIPE_REMOVE_CONTAMINOME="${_PIPE_REMOVE_CONTAMINOME}",_PIPE_REMOVE_RRNA="${_PIPE_REMOVE_RRNA}",_PIPE_REMOVE_UNIVEC="${_PIPE_REMOVE_UNIVEC}",_PIPE_HUMAN_GENOME="${_PIPE_HUMAN_GENOME}",_PIPE_CONTAMINANT_DIR="${_PIPE_CONTAMINANT_DIR}" \
-#     "${_PIPE_INSTALL_DIR}/Pipeline_Scripts/02_Contaminant_Removal.sh")
-# echo "Step 02: Contaminant removal has job ID ${STEP_02}" | tee -a "${_PIPE_EXEC_RECORD}"
+# Step 02: Produce gene trees with RAxML
+STEP_02=$(sbatch \
+    --parsable \
+    --kill-on-invalid-dep=yes \
+    --dependency=afterok:"${STEP_01}" \
+    --mail-type="${_PIPE_EMAIL_TYPES}" \
+    -J "02_Make_Gene_Trees" \
+    -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/02_Make_Gene_Trees.stdout" \
+    -e "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/02_Make_Gene_Trees.stderr" \
+    -N "${_PIPE_NNODES}" \
+    -n "${_PIPE_NTASKS}" \
+    -c "${_PIPE_CPUS_PER_TASK}" \
+    -t "${_PIPE_WALLTIME}" \
+    --mem-per-cpu "${_PIPE_MEM_PER_CPU}" \
+    -p "${_PIPE_PARTITION}" \
+    --export="_PIPE_FINAL_OUTPUT_DIR=${_PIPE_FINAL_OUTPUT_DIR}" \
+    "${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/02_Make_Gene_Trees.sh")
+echo "Step 02: Make_Gene_Trees has job ID ${STEP_02}" | tee -a "${_PIPE_EXEC_RECORD}"
 
 # #   Step 03: xHYB profiling
 # STEP_03=$(sbatch \

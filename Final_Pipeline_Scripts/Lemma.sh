@@ -1,4 +1,7 @@
 #!/bin/bash
+# Authors:
+#   Amber Nashoba
+#   Tom Kono
 # The "lemma" -- the outer layer of a seed coat in a grass flower. This is the
 # script that users should edit to customize their individual pipeline runs.
 # This is the configuration script for the pipeline.

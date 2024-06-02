@@ -1,4 +1,7 @@
 #!/bin/bash
+# Authors:
+#   Amber Nashoba
+#   Tom Kono
 
 # This script requires the following variables be 'exported' into the
 # job script envrionment:
@@ -51,7 +54,7 @@ OG_AA_ALIGN_DIR="${_PIPE_SCRATCH_DIR}/${_PIPE_RUN_NICKNAME}_Target_OG_AA_Align_S
 # A path for the backtranslated aligned orthogroup sequences
 OG_BACKTRANSLATED_ALIGN_DIR="${_PIPE_SCRATCH_DIR}/${_PIPE_RUN_NICKNAME}_Target_OG_Backtranslated_Align_Seqs"
 # A path to the backtranslated, aligned, one representative sequence per species orthogroup sequences. These will be PAML inputs
-PAML_SEQ_INPUT_DIR=""${_PIPE_FINAL_OUTPUT_DIR}/Step_01_PAML_Seq_Inputs""
+PAML_SEQ_INPUT_DIR="${_PIPE_FINAL_OUTPUT_DIR}/Step_01_PAML_Seq_Inputs"
 
 
 # Make the output directories if they do not yet exist on disk
