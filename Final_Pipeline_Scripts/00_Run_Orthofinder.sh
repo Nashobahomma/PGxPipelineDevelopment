@@ -1,6 +1,4 @@
 #!/bin/bash
-
-
 # This script requires the following variables be 'exported' into the
 # job script envrionment:
 #	_PIPE_SCRIPTS_FROM_GITHUB
@@ -35,11 +33,10 @@ cd "${_PIPE_SCRATCH_DIR}"
 TEMP_DIR_NAME=$(mktemp -d)
 cd "${TEMP_DIR_NAME}"
 
-# Read the _PIPE_COHORT_MEMBERS array varaible to identify the species that
-# the user wants to analyze. Iterate over the elements of _PIPE_COHORT_MEMBERS
-# and link each file into a temp input directory
+# Read the species_list.txt file that was built from the _PIPE_COHORT_MEMBERS array
+# varaible to link in the appropriate CDS FASTA files for Orthofinder.
 mkdir -p ./orthofinder_cds_in
-for species_fasta in "${_PIPE_COHORT_MEMBERS[@]}"
+for species_fasta in $(cat "${_PIPE_FINAL_OUTPUT_DIR}/Species_list.txt")
 do
 	ln -s "${species_fasta}" "${TEMP_DIR_NAME}/orthofinder_cds_in/$(basename "${species_fasta}")"
 done

@@ -90,8 +90,13 @@ mkdir -p "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_04_PAML_Runs" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_04Acc_PAML_Accessory_Files"
 
-# Next time: get these sbatch commands finalized as we verfiy and generalize the
-# job scripts.
+# Write the _PIPE_COHORT_MEMBERS array value to a text file on disk so that
+# the Orthofinder job can read it.
+for species_fasta in ${_PIPE_COHORT_MEMBERS[@]}
+do
+	echo "${species_fasta}"
+done > "${_PIPE_FINAL_OUTPUT_DIR}/Species_list.txt"
+
 # Submit the pipeline jobs!
 #  Step 00: Run Orhofinder
 STEP_00=$(sbatch \
@@ -106,7 +111,7 @@ STEP_00=$(sbatch \
     -t "${_PIPE_WALLTIME}" \
     --mem-per-cpu "${_PIPE_MEM_PER_CPU}" \
     -p "${_PIPE_PARTITION}" \
-    --export="_PIPE_SCRIPTS_FROM_GITHUB=${_PIPE_SCRIPTS_FROM_GITHUB},_PIPE_CYP_NAME_PROTEIN_ID=${_PIPE_CYP_NAME_PROTEIN_ID},_PIPE_SCRATCH_DIR=${_PIPE_SCRATCH_DIR},_PIPE_RUN_NICKNAME=${_PIPE_RUN_NICKNAME},_PIPE_ALL_DATA=${_PIPE_ALL_DATA},_PIPE_FINAL_OUTPUT_DIR=${_PIPE_FINAL_OUTPUT_DIR},_PIPE_COHORT_MEMBERS=${_PIPE_COHORT_MEMBERS}" \
+    --export="_PIPE_SCRIPTS_FROM_GITHUB=${_PIPE_SCRIPTS_FROM_GITHUB},_PIPE_CYP_NAME_PROTEIN_ID=${_PIPE_CYP_NAME_PROTEIN_ID},_PIPE_SCRATCH_DIR=${_PIPE_SCRATCH_DIR},_PIPE_RUN_NICKNAME=${_PIPE_RUN_NICKNAME},_PIPE_ALL_DATA=${_PIPE_ALL_DATA},_PIPE_FINAL_OUTPUT_DIR=${_PIPE_FINAL_OUTPUT_DIR}" \
     "${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/00_Run_Orthofinder.sh")
 echo "Step 00: Run_Orthofinder has job ID ${STEP_00}" | tee -a "${_PIPE_EXEC_RECORD}"
 
