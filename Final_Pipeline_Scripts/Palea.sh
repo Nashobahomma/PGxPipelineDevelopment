@@ -107,7 +107,7 @@ STEP_00=$(sbatch \
     --mem-per-cpu "${_PIPE_MEM_PER_CPU}" \
     -p "${_PIPE_PARTITION}" \
     --export="_PIPE_SCRIPTS_FROM_GITHUB=${_PIPE_SCRIPTS_FROM_GITHUB},_PIPE_CYP_NAME_PROTEIN_ID=${_PIPE_CYP_NAME_PROTEIN_ID},_PIPE_SCRATCH_DIR=${_PIPE_SCRATCH_DIR},_PIPE_RUN_NICKNAME=${_PIPE_RUN_NICKNAME},_PIPE_ALL_DATA=${_PIPE_ALL_DATA},_PIPE_FINAL_OUTPUT_DIR=${_PIPE_FINAL_OUTPUT_DIR},_PIPE_COHORT_MEMBERS=${_PIPE_COHORT_MEMBERS}" \
-    "${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/Step_00_Run_Orthofinder.sh")
+    "${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/00_Run_Orthofinder.sh")
 echo "Step 00: Run_Orthofinder has job ID ${STEP_00}" | tee -a "${_PIPE_EXEC_RECORD}"
 
 # Step 01: Translate, align, backtranslate, select representative orthologs
