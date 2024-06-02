@@ -62,7 +62,7 @@ done
 
 # Make the output directory and record who is running the pipeline and how it
 # is configured
-_PIPE_FINAL_OUTPUT_DIR="${_PIPE_ALL_DATA}/${_PIPE_RUN_NICKNAME}"
+_PIPE_FINAL_OUTPUT_DIR="${_PIPE_ALL_DATA}/${		}"
 # Make a text file that records who, when, and where (working directory on Alpine) the pipeline was run.
 _PIPE_EXEC_RECORD="${_PIPE_FINAL_OUTPUT_DIR}/PGx_Pipeline_Execution_Record.txt"
 mkdir -p "${_PIPE_FINAL_OUTPUT_DIR}"
@@ -81,10 +81,7 @@ echo "Final output directory: ${_PIPE_FINAL_OUTPUT_DIR}" >> "${_PIPE_EXEC_RECORD
 mkdir -p "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Checkpoints" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_00_Orthofinder_TargetOGs" \
-	"${_PIPE_FINAL_OUTPUT_DIR}/Step_01_Target_OG_AA_Seqs" \
-	"${_PIPE_FINAL_OUTPUT_DIR}/Step_02_Target_OG_AA_Align_Seqs" \
-	"${_PIPE_FINAL_OUTPUT_DIR}/Step_03_Target_OG_Backtranslated_Align_Seqs" \
-	"${_PIPE_FINAL_OUTPUT_DIR}/Step_04_PAML_Seq_Inputs" \
+	"${_PIPE_FINAL_OUTPUT_DIR}/Step_01_PAML_Seq_Inputs" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_05_PAML_Gene_Trees" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_06_PAML_Ctl_Files" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_07_PAML_Runs" \
@@ -110,25 +107,25 @@ STEP_00=$(sbatch \
     "${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/Step_00_Run_Orthofinder.sh")
 echo "Step 00: Run_Orthofinder has job ID ${STEP_00}" | tee -a "${_PIPE_EXEC_RECORD}"
 
-# #   Step 01: Trimmomatic
-# STEP_01=$(sbatch \
-#     --parsable \
-#     --kill-on-invalid-dep=yes \
-#     --dependency=afterok:"${STEP_00}" \
-#     --mail-type="${_PIPE_EMAIL_TYPES}" \
-#     -J "${_PIPE_NAME}.01_Trimmomatic" \
-#     -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/01_Trimmomatic.stdout" \
-#     -e "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/01_Trimmomatic.stderr" \
-#     -N "${_PIPE_NNODES}" \
-#     -n "${_PIPE_NTASKS}" \
-#     -c "${_PIPE_CPUS_PER_TASK}" \
-#     -t "${_PIPE_WALLTIME}" \
-#     --mem-per-cpu "${_PIPE_MEM_PER_CPU}" \
-#     -p "${_PIPE_PARTITION}" \
-#     -A "${_PIPE_SLURM_ACCOUNT}" \
-#     --export=_PIPE_WORKDIR="${_PIPE_WORKDIR}",_PIPE_INSTALL_DIR="${_PIPE_INSTALL_DIR}",_PIPE_CONDA_DIR="${_PIPE_CONDA_DIR}",_PIPE_FASTQ_DIR="${_PIPE_FASTQ_DIR}",_PIPE_RESULTS_DIR="${_PIPE_RESULTS_DIR}",_PIPE_NAME="${_PIPE_NAME}" \
-#     "${_PIPE_INSTALL_DIR}/Pipeline_Scripts/01_Trimmomatic.sh")
-# echo "Step 01: Trimmomatc has job ID ${STEP_01}" | tee -a "${_PIPE_EXEC_RECORD}"
+# Step 01: Translate, align, backtranslate, select representative orthologs
+# from orthogroups with human CYPs of interest
+STEP_01=$(sbatch \
+    --parsable \
+    --kill-on-invalid-dep=yes \
+    --dependency=afterok:"${STEP_00}" \
+    --mail-type="${_PIPE_EMAIL_TYPES}" \
+    -J "01_Prepare_PAML_Sequences" \
+    -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/01_Prepare_PAML_Sequences.stdout" \
+    -e "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/01_Prepare_PAML_Sequences.stderr" \
+    -N "${_PIPE_NNODES}" \
+    -n "${_PIPE_NTASKS}" \
+    -c "${_PIPE_CPUS_PER_TASK}" \
+    -t "${_PIPE_WALLTIME}" \
+    --mem-per-cpu "${_PIPE_MEM_PER_CPU}" \
+    -p "${_PIPE_PARTITION}" \
+    --export="_PIPE_SCRIPTS_FROM_GITHUB=${_PIPE_SCRIPTS_FROM_GITHUB},_PIPE_CYP_NAME_PROTEIN_ID=${_PIPE_CYP_NAME_PROTEIN_ID},_PIPE_SCRATCH_DIR=${_PIPE_SCRATCH_DIR},_PIPE_RUN_NICKNAME=${_PIPE_RUN_NICKNAME},_PIPE_ALL_DATA=${_PIPE_ALL_DATA},_PIPE_FINAL_OUTPUT_DIR=${_PIPE_FINAL_OUTPUT_DIR},_PIPE_COHORT_MEMBERS=${_PIPE_COHORT_MEMBERS}" \
+    "${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/Step_01_Prepare_PAML_Sequences.sh")
+echo "Step 01: Prepare_PAML_Sequences has job ID ${STEP_01}" | tee -a "${_PIPE_EXEC_RECORD}"
 
 # #   Step 02: Contaminant removal
 # STEP_02=$(sbatch \
