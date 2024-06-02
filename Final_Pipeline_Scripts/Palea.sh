@@ -186,23 +186,3 @@ STEP_04=$(sbatch \
     --export="_PIPE_FINAL_OUTPUT_DIR=${_PIPE_FINAL_OUTPUT_DIR},_PIPE_SCRATCH_DIR=${_PIPE_SCRATCH_DIR},_PIPE_ALL_DATA=${_PIPE_ALL_DATA},_PIPE_RUN_NICKNAME=${_PIPE_RUN_NICKNAME}" \
     "${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/04_Run_PAML_Site_Models.sh")
 echo "Step 04: Run_PAML_Site_Models has job ID ${STEP_04}" | tee -a "${_PIPE_EXEC_RECORD}"
-
-# #   Step 05: Report generation. Note that we always use 1 CPU here.
-# STEP_05=$(sbatch \
-#     --parsable \
-#     --kill-on-invalid-dep=yes \
-#     --dependency=afterok:"${STEP_04}" \
-#     --mail-type="${_PIPE_EMAIL_TYPES}" \
-#     -J "${_PIPE_NAME}.05_Report" \
-#     -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/05_Report.stdout" \
-#     -e "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/05_Report.stderr" \
-#     -N "${_PIPE_NNODES}" \
-#     -n "${_PIPE_NTASKS}" \
-#     -c "1" \
-#     -t "${_PIPE_WALLTIME}" \
-#     --mem-per-cpu "${_PIPE_MEM_PER_CPU}" \
-#     -p "${_PIPE_PARTITION}" \
-#     -A "${_PIPE_SLURM_ACCOUNT}" \
-#     --export=_PIPE_WORKDIR="${_PIPE_WORKDIR}",_PIPE_INSTALL_DIR="${_PIPE_INSTALL_DIR}",_PIPE_CONDA_DIR="${_PIPE_CONDA_DIR}",_PIPE_RESULTS_DIR="${_PIPE_RESULTS_DIR}",_PIPE_NAME="${_PIPE_NAME}",_PIPE_FASTQ_DIR="${_PIPE_FASTQ_DIR}" \
-#     "${_PIPE_INSTALL_DIR}/Pipeline_Scripts/05_Report.sh")
-# echo "Step 05: Report generation has job ID ${STEP_05}" | tee -a "${_PIPE_EXEC_RECORD}"
