@@ -88,6 +88,7 @@ mkdir -p "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_02_PAML_Gene_Trees" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_03_PAML_Control_Files" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_04_PAML_Runs" \
+	"${_PIPE_FINAL_OUTPUT_DIR}/Step_04Acc_PAML_Accessory_Files" \
 	"${_PIPE_FINAL_OUTPUT_DIR}/Step_08_ParseOutFiles"
 
 # Next time: get these sbatch commands finalized as we verfiy and generalize the
@@ -168,25 +169,24 @@ STEP_03=$(sbatch \
     "${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/03_Make_PAML_Control_Files.sh")
 echo "Step 03: Make_PAML_Control_Files has job ID ${STEP_03}" | tee -a "${_PIPE_EXEC_RECORD}"
 
-# #   Step 04: Broader metagenomics profiling
-# STEP_04=$(sbatch \
-#     --parsable \
-#     --kill-on-invalid-dep=yes \
-#     --dependency=afterok:"${STEP_03}" \
-#     --mail-type="${_PIPE_EMAIL_TYPES}" \
-#     -J "${_PIPE_NAME}.04_Metagenomics_Profiling" \
-#     -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/04_Metagenomics_Profiling.stdout" \
-#     -e "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/04_Metagenomics_Profiling.stderr" \
-#     -N "${_PIPE_NNODES}" \
-#     -n "${_PIPE_NTASKS}" \
-#     -c "${_PIPE_CPUS_PER_TASK}" \
-#     -t "${_PIPE_WALLTIME}" \
-#     --mem-per-cpu "${_METAGENOME_MEM_PER_CPU}" \
-#     -p "${_METAGENOME_PARTITION}" \
-#     -A "${_PIPE_SLURM_ACCOUNT}" \
-#     --export=_PIPE_WORKDIR="${_PIPE_WORKDIR}",_PIPE_INSTALL_DIR="${_PIPE_INSTALL_DIR}",_PIPE_CONDA_DIR="${_PIPE_CONDA_DIR}",_PIPE_RESULTS_DIR="${_PIPE_RESULTS_DIR}",_PIPE_NAME="${_PIPE_NAME}",_PIPE_METAGENOME_DB="${_PIPE_METAGENOME_DB}" \
-#     "${_PIPE_INSTALL_DIR}/Pipeline_Scripts/04_Metagenomics_Profiling.sh")
-# echo "Step 04: Metagenomics profiling has job ID ${STEP_04}" | tee -a "${_PIPE_EXEC_RECORD}"
+# Step 04: Run PAML (site models)
+STEP_04=$(sbatch \
+    --parsable \
+    --kill-on-invalid-dep=yes \
+    --dependency=afterok:"${STEP_03}" \
+    --mail-type="${_PIPE_EMAIL_TYPES}" \
+    -J "04_Run_PAML_Site_Models" \
+    -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/04_Run_PAML_Site_Models.stdout" \
+    -e "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/04_Run_PAML_Site_Models.stderr" \
+    -N "${_PIPE_NNODES}" \
+    -n "${_PIPE_NTASKS}" \
+    -c "${_PIPE_CPUS_PER_TASK}" \
+    -t "${_PIPE_WALLTIME}" \
+    --mem-per-cpu "${_PIPE_MEM_PER_CPU}" \
+    -p "${_PIPE_PARTITION}" \
+    --export="_PIPE_FINAL_OUTPUT_DIR=${_PIPE_FINAL_OUTPUT_DIR},_PIPE_SCRATCH_DIR=${_PIPE_SCRATCH_DIR}" \
+    "${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/04_Run_PAML_Site_Models.sh")
+echo "Step 04: Run_PAML_Site_Models has job ID ${STEP_04}" | tee -a "${_PIPE_EXEC_RECORD}"
 
 # #   Step 05: Report generation. Note that we always use 1 CPU here.
 # STEP_05=$(sbatch \
