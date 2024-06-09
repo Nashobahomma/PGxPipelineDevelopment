@@ -45,6 +45,23 @@ information:
    the cluster  
 4. Clusters, is the dropdown list to access the Alpine shell command line.  
 
+### Set up Conda Environment
+Use the file called `PGx_Conda_Env_Package_List.txt` in the GitHub repository
+to set up a Conda environment for the pipeline. Copy this file to the compute
+cluster, and set up the environment in an interactive compute job:
+
+```bash
+
+sinteractive -N 1 -n 1 -c 4 --mem-per-cpu=4gb -t 2:00:00
+module load anaconda
+conda create --name CYPevol --file PGx_Conda_Env_Package_List.txt
+```
+
+**Note** the pipeline scripts are written to use an environment named
+`CYPevol`. If you use a different environment name (`--name` option in the
+above `conda` command), you **must** change the name in the pipeline scripts
+to match.
+
 ## 1. Clone Repository (Or Download Scripts) to Cluster
 ## 2. Download CDS Files from NCBI
 The current analysis is performed over three groups of primates. The include
