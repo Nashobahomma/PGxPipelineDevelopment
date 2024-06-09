@@ -183,3 +183,49 @@ following files and directories are produced:
 - `Step_04_PAML_Runs`: Main output files from PAML (omegas and lnL values)
 
 ## 5. Analyze Results
+The output table produced has these four fixed columns:
+- `Orthogroup.ID`: Orthofinder ID for the ortholog group
+- `CYP.Name`: Gene symbol of the human CYP of interest
+- `Human.Protein.ID`: NCBI protein ID for the human CYP of interest
+- `Num.Species`: Number of species in the alignment analyzed by PAML
+
+Additionally, it produces these columns for each **model** run by PAML:
+- `lnL`: :og-likelihood (natural log) of the model
+- `dNdS`: **Gene-wide average** dN/dS ratio
+- `np`: Number of parameters in the PAML model (necessary for chi-squared test)
+
+Neutral model (0,1,7,8a) additionally have these columns:
+- `W`: Omega values for the site categories indentified by PAML
+- `P`: Proportion of the gene in each site category
+
+**Note**: models that fit multiple site categories will have each category
+value joined by semicolons (`;`).
+
+Selection models (2, 8) have these columns:
+BEB: Bayes-empirical-Bayes (cite here): these are amino acids that have
+statistically significant evidence of positive selection (w>1, P<0.05 [Note,
+different from `P` in the neutral model output])
+
+- `BEB.Position`: Significant BEB alignment position
+- `BEB.AminoAcid`: Significant BEB amino acid
+- `BEB.Probability`: P-value for BEB
+- `BEB.W`: Omega estimate for the significant position
+- `BEB.WSE`: Standard error of the estimated omega
+
+**Note**: when multiple sites cross the threshold for significance, they are
+joined by a semicolon (`;`) in the output CSV.
+
+### 5.1: Likelihood Ratio Tests for Model Selection
+Perform the following comparisions for model selection:
+
+- Model 2 (selection) vs Model 1 (neutral)
+- Model 8 (selection) vs Model 7 (neutral)
+- Model 8 (selection) vs Model 8a (netural)
+
+To calculate the likelihood ratio test score and P-value, use the Chi-squared
+distribution. In R, for example model 2 vs model 1:
+
+```r
+test_stat <- 2*(Model2.lnL - Model1.lnL)
+test_pval <- pchisq(test_stat, df=Model2.np-Model1.np, lower.tail=FALSE)
+```
