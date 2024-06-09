@@ -40,13 +40,13 @@ for seq_file in $(find "${PAML_SEQ_INPUT_DIR}" -mindepth 1 -maxdepth 1 -type f -
 	orthogroup_id="$(basename ${seq_file} | cut -d '_' -f 1)"
 	python3 "${WRITE_CONTROL_FILES_PY}" \
 		"${seq_file}" \
-		"${GENE_TREE_INPUT_DIR}/${orthogroup_id}.raxml.bestTree" \
+		"${PAML_TREE_INPUT_DIR}/${orthogroup_id}.raxml.bestTree" \
 		8a \
 		"${PAML_OUT_DIR}" \
 		> "${CONTROL_FILE_OUTPUT_DIR}/${orthogroup_id}_8a_Ctl_File.txt"
 	python3 "${WRITE_CONTROL_FILES_PY}" \
 		"${seq_file}" \
-		"${GENE_TREE_INPUT_DIR}/${orthogroup_id}.raxml.bestTree" \
+		"${PAML_TREE_INPUT_DIR}/${orthogroup_id}.raxml.bestTree" \
 		01278 \
 		"${PAML_OUT_DIR}" \
 		> "${CONTROL_FILE_OUTPUT_DIR}/${orthogroup_id}_01278_Ctl_File.txt"
