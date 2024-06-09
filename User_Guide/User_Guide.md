@@ -229,3 +229,9 @@ distribution. In R, for example model 2 vs model 1:
 test_stat <- 2*(Model2.lnL - Model1.lnL)
 test_pval <- pchisq(test_stat, df=Model2.np-Model1.np, lower.tail=FALSE)
 ```
+
+If `test_pval` is less than 0.05 (or your favorite threshold), then you can
+reject the netural model (null model).
+
+Perform these comparisons for each orthologous gene group, and choose the model
+that has best statistical support.
