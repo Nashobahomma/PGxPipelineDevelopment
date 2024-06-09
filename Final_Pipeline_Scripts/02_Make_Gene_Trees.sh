@@ -27,18 +27,35 @@ PAML_SEQ_INPUT_DIR="${_PIPE_FINAL_OUTPUT_DIR}/Step_01_PAML_Seq_Inputs"
 # Define a path to where to write the gene trees
 TREE_OUTPUT="${_PIPE_FINAL_OUTPUT_DIR}/Step_02_PAML_Gene_Trees"
 
+# Define a function to prevent MAFFT errors from killing the pipeline. At least one
+# MAFFT error is when a FASTA file has fewer than 4 sequences.
+bypass_mafft_error() {
+    OG_INPUT="${1}"
+    echo "MAFFT caught an error on orthgroup ${OG_INPUT}" > /dev/stderr
+    echo "Check the job log for the specific error message." > /dev/stderr
+    exit 0
+}
+
 for gene_alignment in $(find "${PAML_SEQ_INPUT_DIR}" -mindepth 1 -maxdepth 1 -type f -name '*.fa')
 do 
     orthogroup_id="$(basename ${gene_alignment} | cut -d '_' -f 1)"
-    raxml-ng \
-        --all \
-        --msa "${gene_alignment}" \
-        --msa-format FASTA \
-        --data-type DNA \
-        --threads "${SLURM_CPUS_PER_TASK}" \
-        --model "${NUC_SUBSTIUTION_MODEL}" \
-        --bs-trees "${BOOTSTRAP_REPLICATES}" \
-        --prefix "${TREE_OUTPUT}/${orthogroup_id}"
+    # MAFFT fails on FASTA files with less than 4 sequences. We will skip these and
+    # print a message to stderr indicating that we found one
+    n_seqs=$(grep -c '>' ${gene_alignment})
+    if [ ${n_seqs} -lt 4 ]
+    then
+        echo "Fewer than 4 sequences in ${orthogroup_id}; skipping MAFFT." > /dev/stderr
+    else
+        raxml-ng \
+            --all \
+            --msa "${gene_alignment}" \
+            --msa-format FASTA \
+            --data-type DNA \
+            --threads "${SLURM_CPUS_PER_TASK}" \
+            --model "${NUC_SUBSTIUTION_MODEL}" \
+            --bs-trees "${BOOTSTRAP_REPLICATES}" \
+            --prefix "${TREE_OUTPUT}/${orthogroup_id}" || bypass_mafft_error "${gene_alignment}"
+    fi
 done
 
 

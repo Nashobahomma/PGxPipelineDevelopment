@@ -101,6 +101,7 @@ done > "${_PIPE_FINAL_OUTPUT_DIR}/Species_list.txt"
 #  Step 00: Run Orhofinder
 STEP_00=$(sbatch \
     --parsable \
+    --mail-user="${_PIPE_EMAIL_ADDRESS}" \
     --mail-type="${_PIPE_EMAIL_TYPES}" \
     -J "00_Run_Orthofinder" \
     -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/00_Run_Orthofinder.stdout" \
@@ -121,6 +122,7 @@ STEP_01=$(sbatch \
     --parsable \
     --kill-on-invalid-dep=yes \
     --dependency=afterok:"${STEP_00}" \
+    --mail-user="${_PIPE_EMAIL_ADDRESS}" \
     --mail-type="${_PIPE_EMAIL_TYPES}" \
     -J "01_Prepare_PAML_Sequences" \
     -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/01_Prepare_PAML_Sequences.stdout" \
@@ -140,6 +142,7 @@ STEP_02=$(sbatch \
     --parsable \
     --kill-on-invalid-dep=yes \
     --dependency=afterok:"${STEP_01}" \
+    --mail-user="${_PIPE_EMAIL_ADDRESS}" \
     --mail-type="${_PIPE_EMAIL_TYPES}" \
     -J "02_Make_Gene_Trees" \
     -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/02_Make_Gene_Trees.stdout" \
@@ -159,6 +162,7 @@ STEP_03=$(sbatch \
     --parsable \
     --kill-on-invalid-dep=yes \
     --dependency=afterok:"${STEP_02}" \
+    --mail-user="${_PIPE_EMAIL_ADDRESS}" \
     --mail-type="${_PIPE_EMAIL_TYPES}" \
     -J "03_Make_PAML_Control_Files" \
     -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/03_Make_PAML_Control_Files.stdout" \
@@ -178,6 +182,7 @@ STEP_04=$(sbatch \
     --parsable \
     --kill-on-invalid-dep=yes \
     --dependency=afterok:"${STEP_03}" \
+    --mail-user="${_PIPE_EMAIL_ADDRESS}" \
     --mail-type="${_PIPE_EMAIL_TYPES}" \
     -J "04_Run_PAML_Site_Models" \
     -o "${_PIPE_FINAL_OUTPUT_DIR}/Scheduler_Logs/04_Run_PAML_Site_Models.stdout" \
