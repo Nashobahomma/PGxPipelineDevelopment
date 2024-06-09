@@ -63,6 +63,18 @@ above `conda` command), you **must** change the name in the pipeline scripts
 to match.
 
 ## 1. Clone Repository (Or Download Scripts) to Cluster
+1. Log in to the compute cluster with a terminal (shell).
+2. Use `git` to get the latest copy of the pipeline scripts and supporting
+   data files:
+
+   ```bash
+   git clone https://github.com/Nashobahomma/PGxPipelineDevelopment.git
+   ```
+
+This will create a directory named `PGxPipelineDevelopment` in your current
+working directory. This directory is where all of the pipeline scripts are
+stored.
+
 ## 2. Download CDS Files from NCBI
 The current analysis is performed over three groups of primates. The include
 6, 10, and 16 species each. The 10 species group contains the same species as
@@ -109,7 +121,65 @@ When downloading new CDS files from NCBI:
 8. If the CDS sequences downloaded do not have a peptide product annotated
     for a gene (sequence), it will not be included in the CDS file.
 
-
 ## 3. Edit `Lemma.sh` (Configure Pipeline)
+The file located at `Final_Pipeline_Scripts/Lemma.sh` relative to the cloned
+GitHub repository is file file that you must edit to configure your pipeline
+run. Use the Open OnDemand file edtior or a command line text editor to make
+changes to match your analysis. These variables should be edited:
+
+- `_PIPE_SCRIPTS_FROM_GITHUB`: Set to the full path of the location on the cluster
+  that the GitHub repository was cloned into.
+- `_PIPE_EMAIL_ADDRESS`: Set to the email address to where you will receive
+  e-mail updates.
+- `_PIPE_ALL_DATA`: Set to the path where "static reference data" (e.g., NCBI
+  CDS files) and supporting data files, including those generated during the
+  pipeline run. In practice, it is set to the *parent* directory of the NCBI
+  CDS files directory.
+- `_PIPE_COHORT_MEMBERS`: Set to an array of FASTA files that correspond to
+  the species that should be part of the analysis. It is flexible in that
+  species can be excluded by "commenting" (prefixing with `#`) the corresponding
+  FASTA file name. Make sure it is defined with only one file name per line,
+  and that the parentheses `()` are not commented out.
+
+### 3.1: Optional Configuration Parameters
+These values are derived from other user-configurable values in `Lemma.sh`,
+but you can override them. It is generally do not recommended unless you want
+to have a highly customized output structure.
+
+- `_PIPE_RUN_NICKNAME`: Set to name of the desired output folder. By default,
+  it is the number of species and the execute date, separated by an underscore.
+- Job resource request parameters (e.g., partition, walltime, cores, memory)
+
 ## 4. Run `Palea.sh` (Execute Pipeline)
+Navigate to the `PGxPipelineDevelopment/Final_Pipeline_Scripts` directory. Run
+the `Palea.sh` file with `bash`:
+
+```bash
+cd /projects/anashoba@xsede.org/PipelineFiles/PGxPipelineDevelopment/Final_Pipeline_Scripts
+bash Palea.sh
+```
+
+**Note** that the `Palea.sh` script depends on all of the scripts from the
+GitHub repository being in the same directory. Do not move the scripts around
+before trying to run the pipeline.
+
+### 4.1 Pipeline Output Files
+The output is written to the directory specified by `_PIPE_ALL_DATA`, in a
+sub-directory named according to the value of `_PIPE_RUN_NICKNAME`. The
+following files and directories are produced:
+
+- `Checkpoints`: Directory of checkpoint files for tracking pipeline progress
+- `PGx_Pipeline_Execution_Record.txt`: Text file wtih details of who ran the
+  pipeline, when, from which directory, and the job IDs of the pipeline jobs.
+- `Scheduler_Logs`: Directory of slurm scheduler log files
+- `Species_list.txt`: Text file that lists which species were analyzed
+- `Step_00_Orthofinder_TargetOGs`: Orthofinder groups that have human CYPs of
+  interest
+- `Step_01_PAML_Seq_Inputs`: Aligned FASTA files for PAML input
+- `Step_02_PAML_Gene_Trees`: Gene trees for PAML input
+- `Step_03_PAML_Control_Files`: Control files that specify PAML models for each
+  gene group
+- `Step_04Acc_PAML_Accessory_Files`: "Extra" files produced by PAML during runs
+- `Step_04_PAML_Runs`: Main output files from PAML (omegas and lnL values)
+
 ## 5. Analyze Results
