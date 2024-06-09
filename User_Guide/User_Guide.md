@@ -2,6 +2,49 @@
 ## Overview
 ## Prerequisites
 ### Alpine Access
+Links to Alpine for Noobs slides pdf and video:
+- https://olucdenver-my.sharepoint.com/personal/tonya_brunetti_cuanschutz_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Ftonya%5Fbrunetti%5Fcuanschutz%5Fedu%2FDocuments%2FActive%20HPC%20Alpine%2FAlpine%5FNoob%5FIntroduction%5Fto%5FHPC%5Fand%5FAlpine%201%2Epdf&parent=%2Fpersonal%2Ftonya%5Fbrunetti%5Fcuanschutz%5Fedu%2FDocuments%2FActive%20HPC%20Alpine&ct=1713981640547&or=OWA%2DNT%2DMail&cid=886f03e6%2D04e0%2Db856%2D85c8%2D0cfc266ce527&ga=1
+- https://olucdenver-my.sharepoint.com/personal/tonya_brunetti_cuanschutz_edu/_layouts/15/stream.aspx?id=%252Fpersonal%252Ftonya_brunetti_cuanschutz_edu%252FDocuments%252FActive%20HPC%20Alpine%252Falpine_noob_04032024.mp4&ct=1713981744021&or=OWA-NT-Mail&cid=3ef9a4c1-0158-2038-ff66-d146d2aef6d4&ga=1
+
+#### To set up an account on the computing cluster
+Create an ACCESS-CI account and email rc-help@colorado.edu to request account
+permissions to the ClawLab allocation. 
+
+#### Requesting an RMACC Account on CURC Resources
+1. Create an ACCESS-CI account in the ACCESS user portal: https://metrics.access-ci.org/
+   - If you already have an XSEDE or ACCESS account, please do not create
+   another one – just go to step 2.  
+2. Email rc-help@colorado.edu, and request an account. Include the following 
+information:
+   - your ACCESS or XSEDE username
+   - your institutional affiliation (e.g., “University of Awesome”)
+   - your role (undergraduate graduate student, postdoc, staff, instructor,
+     faculty or affiliated faculty)
+   - your department
+   - your first and last name
+   - your preferred email address for communication  
+3. They will set up your account and send a confirmation email.
+4. Login to the RMACC OnDemand portal to access CURC resources! The first
+   time you login you will be prompted to set up two-factor authentication.
+
+#### Logging in
+1. Navigate to: https://cilogon.org/authorize?client_id=cilogon:/client_id/2839765bdb5cabfdae0daa43a6614b13&scope=email%20openid%20profile%20org.cilogon.userinfo&redirect_uri=https://access-ci.org&response_type=code&state=asdfghjklkjhgfdsa
+2. This page will direct you to CILogon to authenticate your Alpine session.
+   - In the box "Select an Identity Provider," Select "ACCESS CI (XSEDE)"
+   - Click the "Log On" box. 
+3. This then takes you to the real log-on page: "ACCESS." Input your ACCESS ID
+   and ACCESS password. Note: these are not the same as your Anschutz logon
+   credentials.
+4. This takes you to your CURC On Demand page.
+
+#### Moving around in Alpine
+1. At CURC, there is a menu bar with dropdown lists for Files, Jobs,
+   Clusters, Interactive Apps, and an image for My Interactive Sessions. 
+2. Files is file browser where you can view paths to data, scripts, and output 
+3. Jobs is where you can keep track of the jobs that have been submitted to
+   the cluster  
+4. Clusters, is the dropdown list to access the Alpine shell command line.  
+
 ## 1. Clone Repository (Or Download Scripts) to Cluster
 ## 2. Download CDS Files from NCBI
 The current analysis is performed over three groups of primates. The include
