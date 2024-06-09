@@ -32,12 +32,13 @@ When downloading new CDS files from NCBI:
    (e.g. Pan trodlodytes).
 3. Click on the link with the name of that species. In the "Genome," then 
    "Reference Genome" section, select the "Download" button.
-4. In the "Download Package" pop-up window: a) click on the "RefSeq only"
-    radio dial, b) uncheck "Genomic sequences, (FASTA)" and check “Genomic
-    Coding Sequences (FASTA),” c) rename the GCF zip file at the bottom of
-    the pop-up to reflect the scientific name of the species and the name
-    of the assembly (should be the reference assembly)
-    (e.g. Mmulatta_Mmul_10 )
+4. In the "Download Package" pop-up window:
+    - Click on the "RefSeq only" radio dial
+    - Uncheck "Genomic sequences, (FASTA)" and check “Genomic Coding
+      Sequences (FASTA)”
+    - Rename the GCF zip file at the bottom of the pop-up to reflect the
+      scientific name of the species and the name of the assembly (should
+      be the reference assembl) (e.g. Mmulatta_Mmul_10)
 5. Finally, click download, and place the file in a local (your computer)
     directory that you create called, CDS_FASTA
 6. Unzip each file. The fasta file will be in ncbi_dataset/data/GCF_XXXXX;
