@@ -55,6 +55,14 @@ do
             --model "${NUC_SUBSTIUTION_MODEL}" \
             --bs-trees "${BOOTSTRAP_REPLICATES}" \
             --prefix "${TREE_OUTPUT}/${orthogroup_id}" || bypass_mafft_error "${gene_alignment}"
+        # Starting with PAML 4.10, the tree file has a required first line that contains two digits:
+        #    1: number of "species" (really, sequences) in the alignment
+        #    2: number of trees (this will always be 1 for our pipeline)
+        # First, copy the original .raxml.bestTree output to a backup
+        cp "${TREE_OUTPUT}/${orthogroup_id}.raxml.bestTree" "${TREE_OUTPUT}/${orthogroup_id}.raxml.bestTree.orig"
+        # Then, generate the new PAML input tree with the required header line
+        echo "${n_seqs} 1" > "${TREE_OUTPUT}/${orthogroup_id}.raxml.bestTree"
+        cat "${TREE_OUTPUT}/${orthogroup_id}.raxml.bestTree.orig" >> "${TREE_OUTPUT}/${orthogroup_id}.raxml.bestTree"
     fi
 done
 
