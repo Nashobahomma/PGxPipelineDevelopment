@@ -58,142 +58,119 @@ def identify_paml_outputs(pdir):
 	return p_dict
 
 
-def parse_paml_output(paml_output):
-	"""Parse the PAML output files. Return a dictionary with the model names
-	as keys and the parameter estimates, lnL values, and significant BEB
-	codons as the values."""
-	# Start an empty dictionary to populate
-	paml_dict = {}
-	# Start parsing through the PAML file, line-by-line
-	with open(paml_output, 'rt') as f:
-		for line in f:
-			# We will extract the "ns" value: the number of species in the alignment
-			if line.startswith('ns = '):
-				# We will rely on the default behavior of Python's string.split() method,
-				# which is to split on any whitespace. We will take the third element of
-				# the resulting list.
-				num_species = line.strip().split()[2]
-				# Put this number into the dictionary
-				paml_dict['Global'] = {'ns': num_species}
-				# If we want to inclue the length of the alignment, then we will do it
-				# here, too.
-			# We will take advantage of the fact that the PAML output file is
-			# organized into coherent sections. That is, we will not find
-			# outputs for Model 1 in the section for Model 0. BEB is only
-			# meaningful for models 2 and 8 (those with positively selected
-			# sites in the model).
-			if line.startswith('Model 0:'):
-				current_model = 'Model 0'
-				beb_sites = ['NA']
-			elif line.startswith('Model 1:'):
-				current_model = 'Model 1'
-				beb_sites = ['NA']
-			elif line.startswith('Model 2:'):
-				current_model = 'Model 2'
-				beb_sites = []
-			elif line.startswith('Model 7:'):
-				current_model = 'Model 7'
-				beb_sites = ['NA']
-			elif line.startswith('Model 8:'):
-				current_model = 'Model 8'
-				beb_sites = []
-			elif line.startswith('Model: One dN/dS'):
-				# This line is to identify model 8a, which was run with a separate
-				# control file, so it has a slightly different format from the others.
-				current_model = 'Model 8a'
-				beb_sites = ['NA]']
-			# Then, the lnL values and np (we think this is the number of parameters)
-			# values, and the p/w values will be extracted in the same way for each
-			# model.
-			if line.startswith('lnL'):
-				# Split the string on whitespace. The fourth item will have the
-				# np value, and the fifth will have the lnL value.
-				lnl_pieces = line.strip().split()
-				np_piece = lnl_pieces[3]
-				lnl = lnl_pieces[4]
-				# Note that the np value will have a trailing '):' after the
-				# number. So, we will exclude the final two characters.
-				np = np_piece[:-2]
-			# Model 0 does not have 'p' nor 'w' output lines. But, it does have
-			# a line that starts with 'omega'
-			if line.startswith('omega'):
-				# We will name this parameter 'w' in our script to make it
-				# consistent with the outputs from the other models
-				w_pieces = line.strip().split()
-				# Because model 0 reports one ratio, we must store it in a list of
-				# length 1 to make it a consistent object type with the outputs from
-				# the models that report multiple ratios
-				w = [w_pieces[3]]
-				# This is a "dummy" value for p (proportion of the gene with a given
-				# dN/dS estimate) for model 0
-				p = ['1']
-			# The 1, 2, 7, and 8 models use 'w' and 'p' to report dN/dS and
-			# the proportion of the gene with specific dN/dS ratios
-			if line.startswith('w:'):
-				w_pieces = line.strip().split()
-				w = w_pieces[1:]
-			if line.startswith('p:'):
-				p_pieces = line.strip().split()
-				p = p_pieces[1:]
-			# If the line starts with 'Bayes Empirical Bayes' then we are in the BEB
-			# section. This is only present in models 2 and 8 (positive selection).
-			if line.startswith('Bayes Empirical Bayes'):
-				# The actual report of BEB sites is five lines after where we see the
-				# 'Bayes Empirical Bayes' string.
-				next(f)
-				next(f)
-				next(f)
-				next(f)
-				next(f)
-				# Process lines until we see one that starts with 'The grid'
-				beb_text = next(f).strip()
-				while not beb_text.startswith('The grid'):
-					beb_parts = beb_text.split()
-					# If we see a blank line, we will just skip it and not try to
-					# parse it. We expect six parts to the BEB output line.
-					if len(beb_parts) != 6:
-						pass
-					else:
-						# Next, save any lines that have an asterisk in the third
-						# field of the BEB output
-						if '*' in beb_parts[2]:
-							beb_sites.append(beb_parts)
-					beb_text = next(f).strip()
-			# When we find a line that starts with "Time used" then we have reached
-			# the end of a model data output
-			if line.startswith('Time used'):
-				# The dN/dS value reported by PAML in the "dN & dS for each branch" section
-				# is the weighted sum of w*p, which we just extracted. Treating 'w' as the
-				# values to sum and 'p' as the weights for those values, we calcluate the
-				# weighted mean of the various site classes.
-				dn_ds = 0
-				# zip() acts like 'cbind': it takes multiple lists and combines them
-				# in a way where we can iterate over them together.
-				# We call list(p) and list(w) because in the case of model 0, p and
-				# w are single numbers, and do not work with zip() in the way that the
-				# other model outputs would work. Putting them inside list() turns
-				# them into lists of length 1, which works with zip()
-				for weight, site_class_omega in zip(list(p), list(w)):
-					site_class_contribution = float(weight) * float(site_class_omega)
-					dn_ds += site_class_contribution
-					# Now, stick the results into the dictionary. Key the dictionary with
-					# the model name.
-				if current_model in paml_dict:
-					paml_dict[current_model]['w'] = w
-					paml_dict[current_model]['lnL'] = lnl
-					paml_dict[current_model]['np'] = np
-					paml_dict[current_model]['p'] = p
-					paml_dict[current_model]['dN/dS'] = str(dn_ds)
-					paml_dict[current_model]['BEB.Significant'] = beb_sites
-				else:
-					paml_dict[current_model] = {
-						'w': w,
-						'lnL': lnl,
-						'np': np,
-						'p': p,
-						'dN/dS': str(dn_ds),
-						'BEB.Significant': beb_sites}
-	return paml_dict
+def parse_paml_output(paml_output: str) -> dict:
+    """
+    Parse the PAML output files. Return a dictionary with the model names
+    as keys and the parameter estimates, lnL values, and significant BEB
+    codons as the values.
+    
+    Args:
+    paml_output (str): Path to the PAML output file to be parsed.
+    
+    Returns:
+    dict: A dictionary with model names as keys and their parameter estimates,
+          lnL values, and significant BEB codons as values.
+    """
+    # Initialize an empty dictionary to populate
+    paml_dict = {}
+    # Set the initial state for the current model and all parameters.
+    # These variables are reset to the initial values each time a new model
+    # section is encountered. This ensures each model is parsed independently.
+    current_model = None
+    beb_sites = None
+    w, p, lnl, np = [], [], None, None
+
+    def finalize_model() -> None:
+        """
+        Finalize the current model by computing dN/dS and storing the collected
+        parameters in the dictionary.
+        
+        This step checks that the information parsed from the model contains
+        values for lnl, w, and p. Models with missing values for these 
+        parameters are not added to the final results dictionary. This means
+        the directories from files ending in `01278` will not include Model 8a,
+        and directories from files ending in `8a` will only include Model 8a.
+        """
+        if current_model and lnl and w and p:
+            dn_ds = sum(float(weight) * float(site_class_omega) for weight, site_class_omega in zip(p, w))
+            paml_dict[current_model] = {
+                'w': w,
+                'lnL': lnl,
+                'np': np,
+                'p': p,
+                'dN/dS': str(dn_ds),
+                'BEB.Significant': beb_sites
+            }
+    # Start parsing through the PAML file, line-by-line
+    with open(paml_output, 'rt') as f:
+        for line in f:
+            stripped_line = line.strip()
+            
+            if stripped_line.startswith('ns = '):
+                num_species = stripped_line.split()[2]
+                paml_dict['Global'] = {'ns': num_species}
+            if 'Model 0:' in stripped_line:
+                finalize_model()
+                current_model = 'Model 0'
+                beb_sites = ['NA']
+                w, p, lnl, np = [], [], None, None
+            elif 'Model 1:' in stripped_line:
+                finalize_model()
+                current_model = 'Model 1'
+                beb_sites = ['NA']
+                w, p, lnl, np = [], [], None, None
+            elif 'Model 2:' in stripped_line:
+                finalize_model()
+                current_model = 'Model 2'
+                beb_sites = []
+                w, p, lnl, np = [], [], None, None
+            elif 'Model 7:' in stripped_line:
+                finalize_model()
+                current_model = 'Model 7'
+                beb_sites = ['NA']
+                w, p, lnl, np = [], [], None, None
+            elif 'Model 8:' in stripped_line:
+                finalize_model()
+                current_model = 'Model 8'
+                beb_sites = []
+                w, p, lnl, np = [], [], None, None
+            elif 'Model: One dN/dS' in stripped_line:
+                finalize_model()
+                current_model = 'Model 8a'
+                beb_sites = ['NA']
+                w, p, lnl, np = [], [], None, None
+            if 'lnL' in stripped_line:
+                lnl_pieces = stripped_line.split()
+                np_piece = lnl_pieces[3]
+                lnl = lnl_pieces[4]
+                np = np_piece[:-2]
+            if 'omega' in stripped_line and current_model == 'Model 0':
+                w_pieces = stripped_line.split()
+                w = [w_pieces[3]]
+                p = ['1']
+            if 'w:' in stripped_line and current_model != 'Model 0':
+                w_pieces = stripped_line.split()
+                w = w_pieces[1:]
+            if 'p:' in stripped_line:
+                p_pieces = stripped_line.split()
+                p = p_pieces[1:]
+            if 'Bayes Empirical Bayes' in stripped_line:
+                for _ in range(5):
+                    next(f)
+                beb_text = next(f).strip()
+                while not beb_text.startswith('The grid'):
+                    beb_parts = beb_text.split()
+                    if len(beb_parts) == 6 and '*' in beb_parts[2]:
+                        beb_sites.append(beb_parts)
+                    beb_text = next(f).strip()
+            if 'Time used' in stripped_line:
+                finalize_model()
+                current_model = None  # Reset current_model after finishing parsing a model
+
+    # Finalize the last model if not already done
+    finalize_model()
+
+    return paml_dict
 
 
 def parse_cyp_names(c_names):
