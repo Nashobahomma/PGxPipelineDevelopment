@@ -88,10 +88,16 @@ def parse_paml_output(paml_output: str) -> dict:
         This step checks that the information parsed from the model contains
         values for lnl, w, and p. Models with missing values for these 
         parameters are not added to the final results dictionary. This means
-        the directories from files ending in `01278` will not include Model 8a,
-        and directories from files ending in `8a` will only include Model 8a.
+        the dictionaries from files ending in `01278` will not include `Model 8a`,
+        and dictionaries from files ending in `8a` will only include `Model 8a`.
         """
         if current_model and lnl and w and p:
+            # The dN/dS value reported by PAML in the "dN & dS for each branch" section
+            # is the weighted sum of w*p, which we just extracted. Treating 'w' as the
+            # values to sum and 'p' as the weights for those values, we calcluate the
+            # weighted mean of the various site classes.
+            # zip() acts like 'cbind': it takes multiple lists and combines them
+            # in a way where we can iterate over them together.
             dn_ds = sum(float(weight) * float(site_class_omega) for weight, site_class_omega in zip(p, w))
             paml_dict[current_model] = {
                 'w': w,
@@ -105,10 +111,21 @@ def parse_paml_output(paml_output: str) -> dict:
     with open(paml_output, 'rt') as f:
         for line in f:
             stripped_line = line.strip()
-            
+			# We will extract the "ns" value: the number of species in the alignment            
             if stripped_line.startswith('ns = '):
+				# We will rely on the default behavior of Python's split() method,
+				# which is to split on any whitespace. We will take the third element of
+				# the resulting list.                
                 num_species = stripped_line.split()[2]
+				# Put this number into the dictionary                
                 paml_dict['Global'] = {'ns': num_species}
+				# If we want to inclue the length of the alignment, then we will do it
+				# here, too.
+			# We will take advantage of the fact that the PAML output file is
+			# organized into coherent sections. That is, we will not find
+			# outputs for Model 1 in the section for Model 0. BEB is only
+			# meaningful for models 2 and 8 (those with positively selected
+			# sites in the model).
             if 'Model 0:' in stripped_line:
                 finalize_model()
                 current_model = 'Model 0'
@@ -139,27 +156,44 @@ def parse_paml_output(paml_output: str) -> dict:
                 current_model = 'Model 8a'
                 beb_sites = ['NA']
                 w, p, lnl, np = [], [], None, None
+			# Then, the lnL values and np (we think this is the number of parameters)
+			# values, and the p/w values will be extracted.
             if 'lnL' in stripped_line:
+				# Split the string on whitespace. The fourth item will have the
+				# np value, and the fifth will have the lnL value.                
                 lnl_pieces = stripped_line.split()
                 np_piece = lnl_pieces[3]
                 lnl = lnl_pieces[4]
+				# Note that the np value will have a trailing '):' after the
+				# number. So, we will exclude the final two characters.                
                 np = np_piece[:-2]
+            # Model 0 reports the omega value with a variable called `omega`    
             if 'omega' in stripped_line and current_model == 'Model 0':
                 w_pieces = stripped_line.split()
                 w = [w_pieces[3]]
+				# This is a "dummy" value for p (proportion of the gene with a given
+				# dN/dS estimate) for model 0                
                 p = ['1']
+            # All other models report the omega value with a variable called 'w'    
             if 'w:' in stripped_line and current_model != 'Model 0':
                 w_pieces = stripped_line.split()
                 w = w_pieces[1:]
             if 'p:' in stripped_line:
                 p_pieces = stripped_line.split()
                 p = p_pieces[1:]
+			# If the line starts with 'Bayes Empirical Bayes' then we are in the BEB
+			# section. This is only present in models 2 and 8 (positive selection).                
             if 'Bayes Empirical Bayes' in stripped_line:
+                # The actual report of BEB sites is five lines after where we see the
+				# 'Bayes Empirical Bayes' string.
                 for _ in range(5):
                     next(f)
+                # Process lines until we see one that starts with 'The grid'
                 beb_text = next(f).strip()
                 while not beb_text.startswith('The grid'):
                     beb_parts = beb_text.split()
+                    # Save any results in the BEB section that have
+                    # an '*' in the third field
                     if len(beb_parts) == 6 and '*' in beb_parts[2]:
                         beb_sites.append(beb_parts)
                     beb_text = next(f).strip()
