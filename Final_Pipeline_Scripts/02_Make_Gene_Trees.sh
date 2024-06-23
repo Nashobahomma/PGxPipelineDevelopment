@@ -48,6 +48,7 @@ do
     else
         raxml-ng \
             --all \
+            --redo \
             --msa "${gene_alignment}" \
             --msa-format FASTA \
             --data-type DNA \
