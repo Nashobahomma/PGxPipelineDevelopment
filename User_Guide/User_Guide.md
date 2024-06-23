@@ -218,22 +218,30 @@ different from `P` in the neutral model output])
 joined by a semicolon (`;`) in the output CSV.
 
 ### 5.1: Likelihood Ratio Tests for Model Selection
-Perform the following comparisions for model selection:
+The pipeline produces two CSV files that contain the results from likelihood ratio
+tests for PAML model comparisons:
 
-- Model 2 (selection) vs Model 1 (neutral)
-- Model 8 (selection) vs Model 7 (neutral)
-- Model 8 (selection) vs Model 8a (netural)
+| Selection Model | Neutral Model |
+|-----------------|---------------|
+| M2              | M1            |
+| M8              | M7            |
+| M8              | M8a           |
 
-To calculate the likelihood ratio test score and P-value, use the Chi-squared
-distribution. In R, for example model 2 vs model 1:
+For each comparison, the Chi-squared test statistic and the P-value are reported.
 
-```r
-test_stat <- 2*(Model2.lnL - Model1.lnL)
-test_pval <- pchisq(test_stat, df=Model2.np-Model1.np, lower.tail=FALSE)
-```
+One CSV has the full PAML summary as described in section 5. The other CSV has
+fewer columns for easier viewing:
+- CYP name
+- Model 1 Omega
+- Model 2 Omega
+- Model 2 vs Model 1 test statistic
+- Model 2 vs Model 1 P-value
+- Model 7 Omega
+- Model 8 Omega
+- Model 8 vs Model 7 test statistic
+- Model 8 vs Model 7 P-value
+- Model 8a Omega
+- Model 8 vs Model 8a test statistic
+- Model 8 vs Model 8a P-value
 
-If `test_pval` is less than 0.05 (or your favorite threshold), then you can
-reject the netural model (null model).
-
-Perform these comparisons for each orthologous gene group, and choose the model
-that has best statistical support.
+It is left to the user to decide the appropriate model that fits for each CYP gene.
