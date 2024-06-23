@@ -37,6 +37,12 @@ CONTROL_FILE_DIRECTORY="${_PIPE_FINAL_OUTPUT_DIR}/Step_03_PAML_Control_Files"
 # easy to analyze with R
 PARSE_PAML_OUT_PY="${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/Parse_PAML_Outputs.py"
 
+# Define a path to the R script that performs PAML model comparisons
+PAML_MODEL_COMP_R="${_PIPE_SCRIPTS_FROM_GITHUB}/Final_Pipeline_Scripts/PAML_Site_Model_Compare_and_Summarize.R"
+# Define output for the "full" PAML model comparison and "digest" PAML model comparison CSVs
+FULL_PAML_MODEL_COMPARISON_CSV="${_PIPE_ALL_DATA}/Parsed_PAML_Output_table_With_Model_Comparisons_${_PIPE_RUN_NICKNAME}.csv"
+DIGEST_PAML_MODEL_COMPARISON_CSV="${_PIPE_ALL_DATA}/Parsed_PAML_Output_table_Omegas_and_PValues_${_PIPE_RUN_NICKNAME}.csv"
+
 
 # Now, run codeml and the cleanup steps.
 for ctl_file in $(find "${CONTROL_FILE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type f -name '*.txt' | sort -V)
@@ -74,6 +80,8 @@ python "${PARSE_PAML_OUT_PY}" \
 	"${_PIPE_ALL_DATA}/CYPnames_Trans_Prot_with_OGs_${_PIPE_RUN_NICKNAME}.csv" \
 	> "${_PIPE_ALL_DATA}/Parsed_PAML_Output_table_${_PIPE_RUN_NICKNAME}.csv"
 
+# Call the R script to run the model comparisons and produce the CSVs with model comparison results
+Rscript "${PAML_MODEL_COMP_R}" "${FULL_PAML_MODEL_COMPARISON_CSV}" "${DIGEST_PAML_MODEL_COMPARISON_CSV}"
 
 # Make a checkpoint file
 touch "${_PIPE_FINAL_OUTPUT_DIR}/Checkpoints/04_Run_PAML_Site_Models.done"
