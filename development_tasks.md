@@ -39,3 +39,6 @@ Next steps:
 
 - Smooth out wrinkles in pipeline execution.
 - Write user guide
+- Amber work on slides for 17 June presentation: will add data as it becomes available
+also next time, run the six and ten species versions
+Add data - smooth slides

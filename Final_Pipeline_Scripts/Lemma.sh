@@ -47,7 +47,7 @@ export _PIPE_ANALYSIS_START_DATE=$(date +'%F')
 #		Slurm account: the group for tracking resource usage. Set this to the Claw Lab group name on the cluster.
 export _PIPE_PARTITION="amilan"
 export _PIPE_MEM_PER_CPU="4gb"
-export _PIPE_WALLTIME="6:00:00"
+export _PIPE_WALLTIME="24:00:00"
 export _PIPE_CPUS_PER_TASK="16"
 export _PIPE_EMAIL_ADDRESS="amber.nashoba@cuanschutz.edu"
 export _PIPE_NTASKS="1"
