@@ -81,7 +81,7 @@ python "${PARSE_PAML_OUT_PY}" \
 	> "${_PIPE_ALL_DATA}/Parsed_PAML_Output_table_${_PIPE_RUN_NICKNAME}.csv"
 
 # Call the R script to run the model comparisons and produce the CSVs with model comparison results
-Rscript "${PAML_MODEL_COMP_R}" "${FULL_PAML_MODEL_COMPARISON_CSV}" "${DIGEST_PAML_MODEL_COMPARISON_CSV}"
+Rscript "${PAML_MODEL_COMP_R}" "${_PIPE_ALL_DATA}/Parsed_PAML_Output_table_${_PIPE_RUN_NICKNAME}.csv" "${FULL_PAML_MODEL_COMPARISON_CSV}" "${DIGEST_PAML_MODEL_COMPARISON_CSV}"
 
 # Make a checkpoint file
 touch "${_PIPE_FINAL_OUTPUT_DIR}/Checkpoints/04_Run_PAML_Site_Models.done"
