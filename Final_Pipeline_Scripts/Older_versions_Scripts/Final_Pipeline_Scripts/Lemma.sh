@@ -78,21 +78,21 @@ export _PIPE_CYP_NAME_PROTEIN_ID="${_PIPE_ALL_DATA}/CYP57genesHumanProteinIDs.cs
 #	1 comment character: 10 species
 export _PIPE_COHORT_MEMBERS=(
 	"${_PIPE_ALL_CDS}/Callithrix_jacchus.fasta"
-#	"${_PIPE_ALL_CDS}/Carlito_syrichta.fasta"
+	"${_PIPE_ALL_CDS}/Carlito_syrichta.fasta"
 	"${_PIPE_ALL_CDS}/Gorilla_gorilla.fasta"
 	"${_PIPE_ALL_CDS}/Homo_sapiens.fasta"
-#	"${_PIPE_ALL_CDS}/Lemur_catta.fasta"
+	"${_PIPE_ALL_CDS}/Lemur_catta.fasta"
 	"${_PIPE_ALL_CDS}/Macaca_mulatta.fasta"
-#	"${_PIPE_ALL_CDS}/Microcebus_murinus.fasta"
+	"${_PIPE_ALL_CDS}/Microcebus_murinus.fasta"
 	"${_PIPE_ALL_CDS}/Nomascus_leucogenys.fasta"
-#	"${_PIPE_ALL_CDS}/Nycticebus_coucang.fasta"
-#	"${_PIPE_ALL_CDS}/Otolemur_garnettii.fasta"
+	"${_PIPE_ALL_CDS}/Nycticebus_coucang.fasta"
+	"${_PIPE_ALL_CDS}/Otolemur_garnettii.fasta"
 	"${_PIPE_ALL_CDS}/Pan_troglodytes.fasta"
 	"${_PIPE_ALL_CDS}/Papio_anubis.fasta"
 	"${_PIPE_ALL_CDS}/Piliocolobus_tephrosceles.fasta"
 	"${_PIPE_ALL_CDS}/Pongo_abelii.fasta"
 	"${_PIPE_ALL_CDS}/Rhinopithecus_roxellana.fasta"
-#   "${_PIPE_ALL_CDS}/Sapajus_apella.fasta"
+   "${_PIPE_ALL_CDS}/Sapajus_apella.fasta"
 )
 export _PIPE_COHORT_MEMBER_NUMBER="${#_PIPE_COHORT_MEMBERS[@]}"
 
